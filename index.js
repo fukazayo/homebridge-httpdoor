@@ -14,6 +14,7 @@ function DoorAccessory(log, config) {
 	this.name = config["name"];
 	this.controlurl = config["controlURL"];
 	this.statusurl = config["statusURL"];
+	this.accessToken = config["accessToken"];
 
 	this.garageservice = new Service.GarageDoorOpener(this.name);
 
@@ -44,8 +45,10 @@ DoorAccessory.prototype.getState = function(callback) {
 			var closed = state == "closed"
 			callback(null, closed); // success
 		} else {
-			this.log("Error getting state: %s", err);
-			callback(err);
+// FIXME:
+			callback(null, true); // success
+//			this.log("Error getting state: %s", err);
+//			callback(err);
 		}
 	}.bind(this));
 }
@@ -53,11 +56,16 @@ DoorAccessory.prototype.getState = function(callback) {
 DoorAccessory.prototype.setState = function(state, callback) {
 	var doorState = (state == Characteristic.TargetDoorState.CLOSED) ? "closed" : "open";
 	this.log("Set state to %s", doorState);
+
+	var options = {
+		uri: this.controlurl,
+		form: {'command_type': (state == Characteristic.TargetDoorState.CLOSED) ? 'close' : 'open'},
+		json: true,
+		headers: {'Authorization': this.accessToken}
+	}
 	
-	request.get({
-		url: this.controlurl
-	}, function(err, response, body) {
-		if (!err && response.statusCode == 200) {
+	request.post(options, function(err, response, body) {
+		if (!err && response.statusCode == 201) {
 			this.log("State change complete.");
 			var currentState = (state == Characteristic.TargetDoorState.CLOSED) ? Characteristic.CurrentDoorState.CLOSED : Characteristic.CurrentDoorState.OPEN;
 

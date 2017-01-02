@@ -8,6 +8,7 @@ Example config.json:
 			"name": "Garage Door",
 			"controlURL": "your-control-custom-url",
 			"statusURL": "your-status-custom-url",
+			"accessToken": "your-access-token"
 		}]
 	}
 ```
