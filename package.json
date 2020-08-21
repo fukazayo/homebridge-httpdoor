@@ -16,7 +16,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "request": "2.49.x"
+    "request": "2.88.x"
   },
   "bugs": {
     "url": "https://github.com/EricConnerApps/homebridge-httpdoor/issues"
